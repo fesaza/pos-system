@@ -10,8 +10,10 @@ import {
   incrementAsync,
   selectCount,
 } from './counterSlice';
+import db from '../../database/db';
 
 export default function Counter() {
+  const database = db;
   const dispatch = useDispatch();
   const value = useSelector(selectCount);
   return (

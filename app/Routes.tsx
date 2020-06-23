@@ -4,24 +4,31 @@ import { Switch, Route } from 'react-router-dom';
 import routes from './constants/routes.json';
 import App from './containers/App';
 import HomePage from './containers/HomePage';
+import Products from './components/Products';
+import ProductForm from './components/Products/ProductForm';
+
 
 // Lazily load routes and code split with webpacck
-const LazyCounterPage = React.lazy(() =>
-  import(/* webpackChunkName: "CounterPage" */ './containers/CounterPage')
-);
+// const LazyCounterPage = React.lazy(() =>
+//   import(/* webpackChunkName: "CounterPage" */ './containers/CounterPage')
+// );
 
-const CounterPage = (props: Record<string, any>) => (
-  <React.Suspense fallback={<h1>Loading...</h1>}>
-    <LazyCounterPage {...props} />
-  </React.Suspense>
-);
+// const CounterPage = (props: Record<string, any>) => (
+//   <React.Suspense fallback={<h1>Loading...</h1>}>
+//     <LazyCounterPage {...props} />
+//   </React.Suspense>
+// );
 
 export default function Routes() {
   return (
     <App>
       <Switch>
-        <Route path={routes.COUNTER} component={CounterPage} />
+        <Route path={routes.PRODUCTS} component={Products} />
+        <Route path={routes.NEWPRODUCT} component={ProductForm} />
+        <Route path="/edit/:id" component={ProductForm} />
         <Route path={routes.HOME} component={HomePage} />
+        <Route path={routes.CASHREGISTER} component={HomePage} />
+        <Route path={routes.INVOICES} component={HomePage} />
       </Switch>
     </App>
   );
