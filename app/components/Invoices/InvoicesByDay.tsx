@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Divider, Table, Space, Modal } from 'antd';
+import { Divider, Table, Space, Modal, Row, Statistic } from 'antd';
 import * as moment from 'moment';
 import InvoiceDetail from './InvoiceDetail';
 
@@ -46,6 +46,38 @@ const InvoicesByDay = ({data}) => {
       <Divider>
         {data && moment(data.date).format("DD MMM YYYY")}
       </Divider>
+      <Row justify="space-around" align="middle">
+        TOTAL DEL DÍA:
+        <Statistic
+          prefix="$"
+          valueStyle={{ color: '#3f8600' }}
+          value={data.invoices.reduce((prev, next) => {
+            return prev + Number(next.total);
+          }, 0)}
+        />
+        TOTAL DEL DÍA (EFECTIVO):
+        <Statistic
+          prefix="$"
+          valueStyle={{ color: '#3f8600' }}
+          value={data.invoices.reduce((prev, next) => {
+            if(!next.bank){
+              return prev + Number(next.total);
+            }
+            return prev;
+          }, 0)}
+        />
+        TOTAL DEL DÍA (TRANSFERENCIAS):
+        <Statistic
+          prefix="$"
+          valueStyle={{ color: '#3f8600' }}
+          value={data.invoices.reduce((prev, next) => {
+            if(next.bank){
+              return prev + Number(next.total);
+            }
+            return prev;
+          }, 0)}
+        />
+      </Row>
       <Table columns={columns} dataSource={data.invoices} />
       <Modal title="Detalles de factura" visible={openDetails} onCancel={onCloseModal} onOk={onCloseModal}>
         <InvoiceDetail invoice={currentInvoice} />

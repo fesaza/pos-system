@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import groupBy from 'lodash/groupBy';
+import orderBy from 'lodash/orderBy';
 import * as moment from 'moment';
-import { Divider } from 'antd';
+import { Typography } from 'antd';
 import db from '../../database/db';
 import InvoicesByDay from './InvoicesByDay';
+
+const {Title} = Typography;
 
 const InvoicesList = () => {
   const [invoices, setInvoices] = useState([]);
@@ -15,13 +18,14 @@ const InvoicesList = () => {
           docs.map((d) => ({ ...d, onlyDate: moment(d.date).startOf("day") })),
           'onlyDate'
         );
-        const newInv = Object.keys(grouped).map(g => {
+        const invoicesByDays = Object.keys(grouped).map(g => {
           return {
             date: g,
+            dateMoment: moment(g),
             invoices: grouped[g]
           }
         })
-        setInvoices(newInv);
+        setInvoices(orderBy(invoicesByDays, 'dateMoment', 'desc'));
       }
     });
   }, []);
@@ -35,7 +39,7 @@ const InvoicesList = () => {
         width: '100%',
       }}
     >
-      <Divider>Lista de ventas</Divider>
+      <Title>Lista De Ventas</Title>
       {invoices.map((i) => (
         <InvoicesByDay data={i} />
       ))}

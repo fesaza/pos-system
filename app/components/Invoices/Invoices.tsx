@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Row,
   Col,
@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import db from '../../database/db';
 import ProductCard from '../Products/ProductCard';
+import { filterProducts } from '../../utils/utils';
 const { Text } = Typography;
 
 const Invoices = () => {
@@ -19,10 +20,16 @@ const Invoices = () => {
   const [productsFilterd, setProductsFilterd] = useState(products);
   //TODO: Get this from currentInvoice insted use state
   const [productsAdded, setproductsAdded] = useState([]);
-  const [currentInvoice, setCurrentInvoice] = useState({ products: []});
-  const total = productsAdded.reduce((prev, current) => {
-    return prev + Number(current.price);
-  }, 0);
+  const [currentInvoice, setCurrentInvoice] = useState({ products: [] });
+
+  const total = useMemo(
+    () =>
+      productsAdded.reduce((prev, current) => {
+        return prev + Number(current.price);
+      }, 0),
+    [productsAdded.length]
+  );
+
   useEffect(() => {
     db.products.find({}, (err, docs) => {
       if (!err) {
@@ -31,6 +38,7 @@ const Invoices = () => {
       }
     });
   }, []);
+
   const onChangeFilter = useCallback(
     (e) => {
       const value = e.target.value;
@@ -38,39 +46,74 @@ const Invoices = () => {
         setProductsFilterd(products);
       } else {
         setProductsFilterd(
-          products.filter((p) => p.name.includes(value) || p.code === value)
+          filterProducts(products, value)
         );
       }
     },
     [products]
   );
+
+  const onTransferenciaChange = useCallback(
+    (checked: Boolean) => {
+      setCurrentInvoice({
+        ...currentInvoice,
+        bank: checked,
+      });
+    },
+    [currentInvoice]
+  );
+
+  const onSave = useCallback(() => {
+    db.invoices.insert(
+      { ...currentInvoice, total, date: Date.now() },
+      (err: any) => {
+        if (!err) {
+          message.success('Factura guardada');
+          setCurrentInvoice({ products: [] });
+          setproductsAdded([]);
+          setProductsFilterd(products);
+        }
+      }
+    );
+  }, [currentInvoice, total, products]);
+
   return (
     <Row>
       <Col flex={3}>
         <Input placeholder="Filtrar productos" onChange={onChangeFilter} />
         <Divider>Seleccione los productos</Divider>
-        {productsFilterd &&
-          productsFilterd.length > 0 &&
-          productsFilterd.map((p) => (
-            <ProductCard
-              key={p._id}
-              product={p}
-              onClick={() => {
-                const newProducts = [...productsAdded, p];
-                setproductsAdded(newProducts);
-                setCurrentInvoice({
-                  ...currentInvoice,
-                  products: newProducts,
-                });
-              }}
-            />
-          ))}
+        <div
+          style={{
+            height: '70vh',
+            overflow: 'scroll',
+            padding: '5px',
+            paddingTop: '15px',
+            width: '100%',
+          }}
+        >
+          {productsFilterd &&
+            productsFilterd.length > 0 &&
+            productsFilterd.map((p) => (
+              <ProductCard
+                key={p._id}
+                product={p}
+                onClick={() => {
+                  const newProducts = [...productsAdded, p];
+                  setproductsAdded(newProducts);
+                  setCurrentInvoice({
+                    ...currentInvoice,
+                    products: newProducts,
+                  });
+                }}
+              />
+            ))}
+        </div>
       </Col>
       <Col flex={2}>
         <Divider>Productos Agregados</Divider>
         <div
           style={{
-            height: '55vh',
+            height: '50vh',
             overflow: 'scroll',
             padding: '5px',
             paddingTop: '15px',
@@ -79,9 +122,9 @@ const Invoices = () => {
         >
           {productsAdded &&
             productsAdded.length > 0 &&
-            productsAdded.map((p) => (
+            productsAdded.map((p, index) => (
               <ProductCard
-                key={p._id}
+                key={p._id + index}
                 product={p}
                 onClick={() => {
                   const newProducts = productsAdded.filter(
@@ -112,29 +155,15 @@ const Invoices = () => {
             <Text>¿Paga Con Transferencia?: </Text>
             <Switch
               checked={currentInvoice.bank}
-              onChange={(checked) => {
-                setCurrentInvoice({
-                  ...currentInvoice,
-                  bank: checked,
-                });
-              }}
+              onChange={onTransferenciaChange}
             />
           </Col>
           <Col>
             <Button
-            disabled={total === 0 || currentInvoice.products.length === 0}
+              disabled={total === 0 || currentInvoice.products.length === 0}
               type="primary"
               size="large"
-              onClick={() => {
-                db.invoices.insert({ ...currentInvoice, total, date: Date.now() }, (err) => {
-                  if(!err){
-                    message.success('Factura guardada');
-                    setCurrentInvoice({ products: []});
-                    setproductsAdded([]);
-                    setProductsFilterd(products);
-                  }
-                });
-              }}
+              onClick={onSave}
             >
               Guardar
             </Button>

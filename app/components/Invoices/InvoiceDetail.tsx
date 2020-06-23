@@ -13,11 +13,14 @@ const InvoiceDetail = ({ invoice }) => {
           value={invoice.total}
         />
       </Row>
-      <Row justify="center" align="middle">Transferencia: {invoice.bank ? 'Sí' : ''}</Row>
-      <Divider>
-        Productos
-      </Divider>
-      {invoice.products && invoice.products.map(p => <ProductCard product={p} />)}
+      <Row justify="center" align="middle">
+        Transferencia: {invoice.bank ? 'Sí' : ''}
+      </Row>
+      <Divider>Productos</Divider>
+      {invoice.products &&
+        invoice.products.map((p, index) => (
+          <ProductCard key={p._id + index} product={p} />
+        ))}
     </div>
   );
 };
