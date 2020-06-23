@@ -6,6 +6,7 @@ import App from './containers/App';
 import HomePage from './containers/HomePage';
 import Products from './components/Products';
 import ProductForm from './components/Products/ProductForm';
+import Invoices from './components/Invoices';
 
 
 // Lazily load routes and code split with webpacck
@@ -17,7 +18,7 @@ import ProductForm from './components/Products/ProductForm';
 //   <React.Suspense fallback={<h1>Loading...</h1>}>
 //     <LazyCounterPage {...props} />
 //   </React.Suspense>
-// );
+// );<
 
 export default function Routes() {
   return (
@@ -26,9 +27,9 @@ export default function Routes() {
         <Route path={routes.PRODUCTS} component={Products} />
         <Route path={routes.NEWPRODUCT} component={ProductForm} />
         <Route path="/edit/:id" component={ProductForm} />
+        <Route path={routes.INVOICES} component={Invoices} />
         <Route path={routes.HOME} component={HomePage} />
-        <Route path={routes.CASHREGISTER} component={HomePage} />
-        <Route path={routes.INVOICES} component={HomePage} />
+        {/* <Route path={routes.CASHREGISTER} component={HomePage} /> */}
       </Switch>
     </App>
   );

@@ -6,7 +6,7 @@ import FormItem from 'antd/lib/form/FormItem';
 import db from '../../database/db';
 import routes from '../../constants/routes.json';
 
-const defaultValues = { name: '', price: '', code: '', _id: '' };
+const defaultValues = { name: '', price: '', code: ''};
 
 const ProductForm = ({ history, match }) => {
   const [product, setProduct] = useState(defaultValues);

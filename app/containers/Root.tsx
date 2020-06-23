@@ -30,9 +30,9 @@ const Root = ({ store, history }: Props) => (
             <Menu.Item key="1">
               <Link to={routes.INVOICES}>Ventas</Link>
             </Menu.Item>
-            <Menu.Item key="2">
+            {/* <Menu.Item key="2">
               <Link to={routes.CASHREGISTER}>Turno (Caja)</Link>
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item key="3">
               <Link to={routes.PRODUCTS}>Lista de precios (Productos)</Link>
             </Menu.Item>
