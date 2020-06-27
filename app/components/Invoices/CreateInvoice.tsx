@@ -74,7 +74,7 @@ const CreateInvoice = ({products, onProductClick, onInvoiceCreated}) => {
               key={p._id + index}
               product={p}
               onClick={() => {
-                onProductClick(p);
+                onProductClick(p, index);
               }}
             />
           ))}

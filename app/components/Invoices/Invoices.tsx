@@ -34,12 +34,15 @@ const Invoices = () => {
   /**
    * When the user clicks an item on the invoice that item will be removed
    */
-  const onProductInvoiceClick = useCallback(() => {
-    const newProducts = products.filter(
-      (productAdded) => productAdded._id !== p._id
-    );
-    setproductsAdded(newProducts);
-  }, [products]);
+  const onProductInvoiceClick = useCallback(
+    (p, index) => {
+      const newProducts = productsAdded.filter(
+        (productAdded, i) => index !== i
+      );
+      setproductsAdded(newProducts);
+    },
+    [productsAdded]
+  );
 
   /**
    * Restart filter and products added
