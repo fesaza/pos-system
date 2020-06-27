@@ -97,4 +97,4 @@ const ProductForm = ({ history, match }) => {
   );
 };
 
-export default ProductForm;
+export default React.memo(ProductForm);

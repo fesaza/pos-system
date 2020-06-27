@@ -6,7 +6,7 @@ import { Typography } from 'antd';
 import db from '../../database/db';
 import InvoicesByDay from './InvoicesByDay';
 
-const {Title} = Typography;
+const { Title } = Typography;
 
 const InvoicesList = () => {
   const [invoices, setInvoices] = useState([]);
@@ -15,16 +15,18 @@ const InvoicesList = () => {
       if (!err) {
         //group by date
         const grouped = groupBy(
-          docs.map((d) => ({ ...d, onlyDate: moment(d.date).startOf("day") })),
+          docs
+            .filter((d) => !!d.date)
+            .map((d) => ({ ...d, onlyDate: moment(d.date).startOf('day') })),
           'onlyDate'
         );
-        const invoicesByDays = Object.keys(grouped).map(g => {
+        const invoicesByDays = Object.keys(grouped).map((g) => {
           return {
             date: g,
             dateMoment: moment(g),
-            invoices: grouped[g]
-          }
-        })
+            invoices: grouped[g],
+          };
+        });
         setInvoices(orderBy(invoicesByDays, 'dateMoment', 'desc'));
       }
     });
@@ -41,7 +43,7 @@ const InvoicesList = () => {
     >
       <Title>Lista De Ventas</Title>
       {invoices.map((i) => (
-        <InvoicesByDay data={i} />
+        <InvoicesByDay key={i._id} data={i} />
       ))}
     </div>
   );

@@ -1,34 +1,14 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  Row,
-  Col,
-  Input,
-  Divider,
-  Statistic,
-  Button,
-  Switch,
-  Typography,
-  message,
-} from 'antd';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Row, Col, Input, Divider } from 'antd';
 import db from '../../database/db';
 import ProductCard from '../Products/ProductCard';
 import { filterProducts } from '../../utils/utils';
-const { Text } = Typography;
+import CreateInvoice from './CreateInvoice';
 
 const Invoices = () => {
   const [products, setProducts] = useState([]);
   const [productsFilterd, setProductsFilterd] = useState(products);
-  //TODO: Get this from currentInvoice insted use state
   const [productsAdded, setproductsAdded] = useState([]);
-  const [currentInvoice, setCurrentInvoice] = useState({ products: [] });
-
-  const total = useMemo(
-    () =>
-      productsAdded.reduce((prev, current) => {
-        return prev + Number(current.price);
-      }, 0),
-    [productsAdded.length]
-  );
 
   useEffect(() => {
     db.products.find({}, (err, docs) => {
@@ -41,41 +21,33 @@ const Invoices = () => {
 
   const onChangeFilter = useCallback(
     (e) => {
-      const value = e.target.value;
+      const { value } = e.target;
       if (!value) {
         setProductsFilterd(products);
       } else {
-        setProductsFilterd(
-          filterProducts(products, value)
-        );
+        setProductsFilterd(filterProducts(products, value));
       }
     },
     [products]
   );
 
-  const onTransferenciaChange = useCallback(
-    (checked: Boolean) => {
-      setCurrentInvoice({
-        ...currentInvoice,
-        bank: checked,
-      });
-    },
-    [currentInvoice]
-  );
-
-  const onSave = useCallback(() => {
-    db.invoices.insert(
-      { ...currentInvoice, total, date: Date.now() },
-      (err: any) => {
-        if (!err) {
-          message.success('Factura guardada');
-          setCurrentInvoice({ products: [] });
-          setproductsAdded([]);
-          setProductsFilterd(products);
-        }
-      }
+  /**
+   * When the user clicks an item on the invoice that item will be removed
+   */
+  const onProductInvoiceClick = useCallback(() => {
+    const newProducts = products.filter(
+      (productAdded) => productAdded._id !== p._id
     );
-  }, [currentInvoice, total, products]);
+    setproductsAdded(newProducts);
+  }, [products]);
+
+  /**
+   * Restart filter and products added
+   */
+  const onInvoiceCreated = useCallback(() => {
+    setproductsAdded([]);
+    setProductsFilterd(products);
+  }, [products]);
 
   return (
     <Row>
@@ -100,78 +72,20 @@ const Invoices = () => {
                 onClick={() => {
                   const newProducts = [...productsAdded, p];
                   setproductsAdded(newProducts);
-                  setCurrentInvoice({
-                    ...currentInvoice,
-                    products: newProducts,
-                  });
                 }}
               />
             ))}
         </div>
       </Col>
       <Col flex={2}>
-        <Divider>Productos Agregados</Divider>
-        <div
-          style={{
-            height: '50vh',
-            overflow: 'scroll',
-            padding: '5px',
-            paddingTop: '15px',
-            width: '100%',
-          }}
-        >
-          {productsAdded &&
-            productsAdded.length > 0 &&
-            productsAdded.map((p, index) => (
-              <ProductCard
-                key={p._id + index}
-                product={p}
-                onClick={() => {
-                  const newProducts = productsAdded.filter(
-                    (productAdded) => productAdded._id !== p._id
-                  );
-                  setproductsAdded(newProducts);
-                  setCurrentInvoice({
-                    ...currentInvoice,
-                    products: newProducts,
-                  });
-                }}
-              />
-            ))}
-        </div>
-
-        <Divider />
-        <Row justify="space-around" align="middle">
-          TOTAL A PAGAR:
-          <Statistic
-            prefix="$"
-            valueStyle={{ color: '#3f8600' }}
-            value={total}
-          />
-        </Row>
-        <Divider />
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Text>¿Paga Con Transferencia?: </Text>
-            <Switch
-              checked={currentInvoice.bank}
-              onChange={onTransferenciaChange}
-            />
-          </Col>
-          <Col>
-            <Button
-              disabled={total === 0 || currentInvoice.products.length === 0}
-              type="primary"
-              size="large"
-              onClick={onSave}
-            >
-              Guardar
-            </Button>
-          </Col>
-        </Row>
+        <CreateInvoice
+          products={productsAdded}
+          onProductClick={onProductInvoiceClick}
+          onInvoiceCreated={onInvoiceCreated}
+        />
       </Col>
     </Row>
   );
 };
 
-export default Invoices;
+export default React.memo(Invoices);

@@ -17,4 +17,4 @@ const ProductCard = ({ product, onClick }) => {
   );
 };
 
-export default ProductCard;
+export default React.memo(ProductCard);
