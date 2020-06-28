@@ -17,7 +17,17 @@ import ProductCard from '../Products/ProductCard';
 const { Text } = Typography;
 const defaultInvoice = { products: [] };
 
-const CreateInvoice = ({ products, onProductClick, onInvoiceCreated }) => {
+type Props = {
+  products: [];
+  onProductClick: (product: any, index: number) => void;
+  onInvoiceCreated: () => void;
+};
+
+const CreateInvoice = ({
+  products,
+  onProductClick,
+  onInvoiceCreated,
+}: Props) => {
   const [currentInvoice, setCurrentInvoice] = useState(defaultInvoice);
   const [backCash, setBackCash] = useState(0);
   const [cash, setCash] = useState(0);
