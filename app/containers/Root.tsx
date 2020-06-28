@@ -3,12 +3,12 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { hot } from 'react-hot-loader/root';
 import { History } from 'history';
+import { Link } from 'react-router-dom';
+import { Layout, Menu } from 'antd';
 import { Store } from '../store';
 import Routes from '../Routes';
-import { Link } from 'react-router-dom';
 import routes from '../constants/routes.json';
 import styles from './Root.css';
-import { Layout, Menu } from 'antd';
 
 const { Header, Content, Footer } = Layout;
 
@@ -25,7 +25,7 @@ const Root = ({ store, history }: Props) => (
           <div className={styles.logo} />
           <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
             <Menu.Item key="0">
-              <Link to={routes.HOME}>Inicio</Link>
+              <Link to={routes.HOME}>Resumen de ventas</Link>
             </Menu.Item>
             <Menu.Item key="1">
               <Link to={routes.INVOICES}>Ventas</Link>

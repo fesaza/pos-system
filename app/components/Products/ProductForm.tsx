@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Input, Icon, message, Button } from 'antd';
+import { Input, message, Button } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
 import db from '../../database/db';
 import routes from '../../constants/routes.json';

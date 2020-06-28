@@ -8,17 +8,21 @@ import {
   Switch,
   Typography,
   message,
+  InputNumber,
 } from 'antd';
+import FormItem from 'antd/lib/form/FormItem';
 import db from '../../database/db';
 import ProductCard from '../Products/ProductCard';
 
 const { Text } = Typography;
 const defaultInvoice = { products: [] };
 
-const CreateInvoice = ({products, onProductClick, onInvoiceCreated}) => {
+const CreateInvoice = ({ products, onProductClick, onInvoiceCreated }) => {
   const [currentInvoice, setCurrentInvoice] = useState(defaultInvoice);
+  const [backCash, setBackCash] = useState(0);
+  const [cash, setCash] = useState(0);
   useEffect(() => {
-    setCurrentInvoice(prevState => ({
+    setCurrentInvoice((prevState) => ({
       ...prevState,
       products,
     }));
@@ -33,7 +37,7 @@ const CreateInvoice = ({products, onProductClick, onInvoiceCreated}) => {
       }, 0),
     [products]
   );
-  const onTransferenciaChange = useCallback(
+  const onTransferChange = useCallback(
     (checked: boolean) => {
       setCurrentInvoice({
         ...currentInvoice,
@@ -50,6 +54,8 @@ const CreateInvoice = ({products, onProductClick, onInvoiceCreated}) => {
         if (!err) {
           message.success('Factura guardada');
           setCurrentInvoice({ products: [] });
+          setBackCash(0);
+          setCash(0);
           onInvoiceCreated();
         }
       }
@@ -88,10 +94,25 @@ const CreateInvoice = ({products, onProductClick, onInvoiceCreated}) => {
       <Divider />
       <Row justify="space-between" align="middle">
         <Col>
-          <Text>¿Paga Con Transferencia?: </Text>
-          <Switch
-            checked={currentInvoice.bank}
-            onChange={onTransferenciaChange}
+          <Text>¿Transferencia?: </Text>
+          <Switch checked={currentInvoice.bank} onChange={onTransferChange} />
+        </Col>
+        <Col>
+          <FormItem label="Efectivo">
+            <InputNumber
+              value={cash}
+              onChange={(cashValue) => {
+                setCash(cashValue);
+                setBackCash(cashValue - total);
+              }}
+            />
+          </FormItem>
+        </Col>
+        <Col>
+          <Statistic
+            title={backCash >= 0 ? 'Total a devolver' : 'Pendiente por pagar'}
+            value={backCash}
+            prefix="$"
           />
         </Col>
         <Col>
