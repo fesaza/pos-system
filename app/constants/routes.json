@@ -1,7 +1,7 @@
 {
   "HOME": "/",
   "PRODUCTS": "/products",
-  "INVOICES": "/counter",
-  "CASHREGISTER": "/counter",
+  "INVOICES": "/invoices",
+  "CASHREGISTER": "/cashregister",
   "NEWPRODUCT": "/newproduct"
 }
