@@ -3,6 +3,10 @@ import { Card, Row, Col, Statistic, Typography } from 'antd';
 
 const { Title } = Typography;
 const ProductCard = ({ product, onClick }) => {
+  let price = product.price;
+  if (product.amount) {
+    price *= product.amount;
+  }
   return (
     <a onClick={onClick}>
       <Card size="small" style={{ margin: '4px 5px' }}>
@@ -10,10 +14,23 @@ const ProductCard = ({ product, onClick }) => {
       <p>{product.price}</p> */}
         <Row>
           <Col flex="auto">
-            <Title level={4}>{product.name}</Title>
+            <Row>
+              <Title level={4}>{product.name}</Title>
+              {product.amount && product.amount > 1 && (
+                <Statistic
+                  style={{
+                    margin: '0 5px',
+                  }}
+                  value={product.amount}
+                  valueStyle={{ color: '#3f8600' }}
+                  prefix=":"
+                  suffix="Unidades"
+                />
+              )}
+            </Row>
           </Col>
-          <Col flex="120px">
-            <Statistic value={product.price} prefix="$" />
+          <Col flex="140px">
+            <Statistic value={price} prefix="$" />
           </Col>
         </Row>
       </Card>

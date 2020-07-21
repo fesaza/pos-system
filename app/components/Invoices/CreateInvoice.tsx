@@ -10,6 +10,7 @@ import {
   message,
   InputNumber,
 } from 'antd';
+import groupBy from 'lodash/groupBy';
 import FormItem from 'antd/lib/form/FormItem';
 import db from '../../database/db';
 import ProductCard from '../Products/ProductCard';
@@ -71,6 +72,14 @@ const CreateInvoice = ({
       }
     );
   }, [currentInvoice, onInvoiceCreated, total]);
+
+  const productsGroupedObj = groupBy(products, 'name');
+  const productsGrouped = Object.keys(productsGroupedObj).map((g) => ({
+    name: g,
+    price: productsGroupedObj[g][0].price,
+    amount: productsGroupedObj[g].length,
+  }));
+
   return (
     <>
       <Divider>Productos Agregados</Divider>
@@ -83,9 +92,9 @@ const CreateInvoice = ({
           width: '100%',
         }}
       >
-        {products &&
-          products.length > 0 &&
-          products.map((p, index) => (
+        {productsGrouped &&
+          productsGrouped.length > 0 &&
+          productsGrouped.map((p, index) => (
             <ProductCard
               key={p._id + index}
               product={p}
