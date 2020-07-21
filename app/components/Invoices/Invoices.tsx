@@ -2,34 +2,39 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Row, Col, Input, Divider } from 'antd';
 import db from '../../database/db';
 import ProductCard from '../Products/ProductCard';
-import { filterProducts } from '../../utils/utils';
 import CreateInvoice from './CreateInvoice';
+import { filterProductByName } from '../../utils/utils';
 
 const Invoices = () => {
   const [products, setProducts] = useState([]);
-  const [productsFilterd, setProductsFilterd] = useState(products);
+  const [filter, setFilter] = useState('');
+  // const [productsFilterd, setProductsFilterd] = useState(products);
   const [productsAdded, setproductsAdded] = useState([]);
 
   useEffect(() => {
-    db.products.find({}, (err, docs) => {
+    const cb = (err, docs) => {
       if (!err) {
         setProducts(docs);
-        setProductsFilterd(docs);
       }
-    });
-  }, []);
+    };
+    if (!filter) {
+      db.products.find({}).limit(12).exec(cb);
+    } else {
+      db.products
+        .find({
+          $where() {
+            return filterProductByName(this, filter);
+          },
+        })
+        .limit(12)
+        .exec(cb);
+    }
+  }, [filter]);
 
-  const onChangeFilter = useCallback(
-    (e) => {
-      const { value } = e.target;
-      if (!value) {
-        setProductsFilterd(products);
-      } else {
-        setProductsFilterd(filterProducts(products, value));
-      }
-    },
-    [products]
-  );
+  const onChangeFilter = useCallback((e) => {
+    const { value } = e.target;
+    setFilter(value);
+  }, []);
 
   /**
    * When the user clicks an item on the invoice that item will be removed
@@ -49,13 +54,18 @@ const Invoices = () => {
    */
   const onInvoiceCreated = useCallback(() => {
     setproductsAdded([]);
-    setProductsFilterd(products);
-  }, [products]);
+    setFilter('');
+    // setProductsFilterd(products);
+  }, []);
 
   return (
     <Row>
       <Col flex={3}>
-        <Input placeholder="Filtrar productos" onChange={onChangeFilter} />
+        <Input
+          placeholder="Filtrar productos"
+          onChange={onChangeFilter}
+          value={filter}
+        />
         <Divider>Seleccione los productos</Divider>
         <div
           style={{
@@ -66,9 +76,9 @@ const Invoices = () => {
             width: '100%',
           }}
         >
-          {productsFilterd &&
-            productsFilterd.length > 0 &&
-            productsFilterd.map((p) => (
+          {products &&
+            products.length > 0 &&
+            products.map((p) => (
               <ProductCard
                 key={p._id}
                 product={p}
