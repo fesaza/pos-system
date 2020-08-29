@@ -9,7 +9,6 @@ import { filterProductByName } from '../../utils/utils';
 const Invoices = () => {
   const [products, setProducts] = useState([]);
   const [filter, setFilter] = useState('');
-  // const [productsFilterd, setProductsFilterd] = useState(products);
   const [productsAdded, setproductsAdded] = useState([]);
 
   useEffect(() => {
@@ -62,7 +61,6 @@ const Invoices = () => {
   const onInvoiceCreated = useCallback(() => {
     setproductsAdded([]);
     setFilter('');
-    // setProductsFilterd(products);
   }, []);
 
   return (
