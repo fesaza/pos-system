@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React, { useState, useEffect, useCallback } from 'react';
 import { Row, Col, Input, Divider } from 'antd';
 import db from '../../database/db';
@@ -40,11 +41,17 @@ const Invoices = () => {
    * When the user clicks an item on the invoice that item will be removed
    */
   const onProductInvoiceClick = useCallback(
-    (p, index) => {
-      const newProducts = productsAdded.filter(
-        (productAdded, i) => index !== i
-      );
-      setproductsAdded(newProducts);
+    (p) => {
+      let alreadyDeleted = false;
+      const newProducts = productsAdded.map((productAdded) => {
+        if (alreadyDeleted) return productAdded;
+        if (p._id === productAdded._id) {
+          alreadyDeleted = true;
+          return null;
+        }
+        return productAdded;
+      });
+      setproductsAdded(newProducts.filter((x) => x));
     },
     [productsAdded]
   );

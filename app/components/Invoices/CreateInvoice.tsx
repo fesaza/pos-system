@@ -76,6 +76,7 @@ const CreateInvoice = ({
   const productsGroupedObj = groupBy(products, 'name');
   const productsGrouped = Object.keys(productsGroupedObj).map((g) => ({
     name: g,
+    _id: productsGroupedObj[g][0]._id,
     price: productsGroupedObj[g][0].price,
     amount: productsGroupedObj[g].length,
   }));
