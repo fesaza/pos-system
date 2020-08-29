@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import groupBy from 'lodash/groupBy';
 import orderBy from 'lodash/orderBy';
 import * as moment from 'moment';
-import { Typography } from 'antd';
+import { Typography, Switch } from 'antd';
 import db from '../../database/db';
 import InvoicesByDay from './InvoicesByDay';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const InvoicesList = () => {
   const [invoices, setInvoices] = useState([]);
+  const [viewAll, setViewAll] = useState(false);
   useEffect(() => {
     db.invoices.find({}, (err, docs) => {
       if (!err) {
@@ -27,9 +28,17 @@ const InvoicesList = () => {
             invoices: grouped[g],
           };
         });
-        setInvoices(orderBy(invoicesByDays, 'dateMoment', 'desc'));
+        const invs = orderBy(invoicesByDays, 'dateMoment', 'desc');
+        if (viewAll) {
+          setInvoices(invs);
+        } else {
+          setInvoices(invs.slice(0, 5));
+        }
       }
     });
+  }, [viewAll]);
+  const onChangeViewAll = useCallback(() => {
+    setViewAll((prev) => !prev);
   }, []);
   return (
     <div
@@ -42,6 +51,8 @@ const InvoicesList = () => {
       }}
     >
       <Title>Lista De Ventas</Title>
+      <Text>Ver las ventas de todos los días? (Lento): </Text>
+      <Switch checked={viewAll} onChange={onChangeViewAll} />
       {invoices.map((i) => (
         <InvoicesByDay key={i._id} data={i} />
       ))}
