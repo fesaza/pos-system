@@ -36,6 +36,9 @@ const Root = ({ store, history }: Props) => (
             <Menu.Item key="3">
               <Link to={routes.PRODUCTS}>Lista de precios (Productos)</Link>
             </Menu.Item>
+            <Menu.Item key="4">
+              <Link to={routes.TOPSALES}>Productos mas vendidos</Link>
+            </Menu.Item>
           </Menu>
         </Header>
         <Content

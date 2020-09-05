@@ -3,5 +3,6 @@
   "PRODUCTS": "/products",
   "INVOICES": "/invoices",
   "CASHREGISTER": "/cashregister",
-  "NEWPRODUCT": "/newproduct"
+  "NEWPRODUCT": "/newproduct",
+  "TOPSALES": "/topsales"
 }

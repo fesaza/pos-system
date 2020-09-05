@@ -8,6 +8,7 @@ import Products from './components/Products';
 import ProductForm from './components/Products/ProductForm';
 import Invoices from './components/Invoices';
 import CashRegister from './components/CashRegister';
+import TopSales from './components/Dashboards/TopSales';
 
 
 // Lazily load routes and code split with webpacck
@@ -30,6 +31,7 @@ export default function Routes() {
         <Route path="/edit/:id" component={ProductForm} />
         <Route path={routes.INVOICES} component={Invoices} />
         <Route path={routes.CASHREGISTER} component={CashRegister} />
+        <Route path={routes.TOPSALES} component={TopSales} />
         <Route path={routes.HOME} component={HomePage} />
       </Switch>
     </App>
